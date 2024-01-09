@@ -8,7 +8,6 @@ repositories {
 }
 
 dependencies {
-    implementation("org.apache.logging.log4j:log4j-core:2.22.1")
     implementation("org.apache.logging.log4j:log4j-slf4j2-impl:2.22.1")
     implementation("be.zvz:KotlinInside:1.16.1")
     implementation("com.squareup.okhttp3:okhttp:5.0.0-alpha.11")
@@ -36,5 +35,5 @@ tasks {
 }
 
 kotlin {
-    jvmToolchain(8)
+    jvmToolchain(17)
 }
