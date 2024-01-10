@@ -87,8 +87,11 @@ fun main() {
                         .toList()
                 }
                 while (serverAddress.find()) {
+                    val start = serverAddress.start()
+                    val end = serverAddress.end()
                     if (urlRanges.find {
-                        it.first <= serverAddress.start() && serverAddress.end() <= it.second
+                        it.first <= start && start <= it.second ||
+                        it.first <= end && end <= it.second
                     } != null) continue
                     content = serverAddress.group()
                     break@getAddress
