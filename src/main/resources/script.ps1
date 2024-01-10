@@ -6,6 +6,7 @@ $xml = @"
       <text>%content%</text>
     </binding>
   </visual>
+  <audio src="ms-winsoundevent:Notification.Mail"/>
 </toast>
 "@
 $XmlDocument = [Windows.Data.Xml.Dom.XmlDocument, Windows.Data.Xml.Dom.XmlDocument, ContentType = WindowsRuntime]::New()

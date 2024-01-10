@@ -38,7 +38,8 @@ fun main() {
     trayIcon.popupMenu = popupMenu
     SystemTray.getSystemTray().add(trayIcon)
 
-    val domainPattern = Pattern.compile("(([a-zA-Z0-9가-힣]+\\.)+[a-zA-Z가-힣]+|\\d{1,3}(\\.\\d{1,3}){3})(:\\d{1,5})?")
+    val serverAddressPattern = Pattern.compile("(([a-zA-Z0-9가-힣-]+\\.)+[a-zA-Z가-힣]{2,}|\\d{1,3}(\\.\\d{1,3}){3})(:\\d{1,5})?")
+    val urlPattern = Pattern.compile("https?://(([a-zA-Z0-9가-힣-]+\\.)+[a-zA-Z가-힣]{2,}|\\d{1,3}(\\.\\d{1,3}){3})(:\\d{1,5})?(/\\S+)?")
     var lastCheckedId = ArticleList(GALL_ID).apply { request() }.getGallList().first().identifier
 
     logger.info("시작됨")
@@ -79,16 +80,17 @@ fun main() {
             getAddress@for (e in parsed.children()) {
                 if (e.className().isNotEmpty()) continue
                 val text = e.text()
-                val matcher = domainPattern.matcher(text)
-                while (matcher.find()) {
-                    val start = matcher.start()
-                    val end = matcher.end()
-                    val group = matcher.group()
-                    if (start != 0 && text[start - 1] == '/' ||
-                        text.length > end && text[end] == '/' ||
-                        group.substringBefore('.') == "www"
-                    ) continue
-                    content = group
+                val serverAddress = serverAddressPattern.matcher(text)
+                val urlRanges by lazy {
+                    urlPattern.matcher(text).results()
+                        .map { Pair(it.start(), it.end()) }
+                        .toList()
+                }
+                while (serverAddress.find()) {
+                    if (urlRanges.find {
+                        it.first <= serverAddress.start() && serverAddress.end() <= it.second
+                    } != null) continue
+                    content = serverAddress.group()
                     break@getAddress
                 }
             }
