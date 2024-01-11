@@ -11,7 +11,6 @@ import java.awt.MenuItem
 import java.awt.PopupMenu
 import java.awt.SystemTray
 import java.awt.TrayIcon
-import java.io.IOException
 import java.util.regex.Pattern
 import javax.imageio.ImageIO
 import kotlin.system.exitProcess
@@ -50,7 +49,7 @@ fun main() {
             while (true) {
                 try {
                     request()
-                } catch (e: IOException) {
+                } catch (e: Exception) {
                     logger.error("글 목록 읽기 중 오류: $e")
                     Thread.sleep(1000)
                     continue
@@ -67,7 +66,7 @@ fun main() {
                 while (true) {
                     try {
                         request()
-                    } catch (e: IOException) {
+                    } catch (e: Exception) {
                         logger.error("글 읽기 중 오류: $e")
                         Thread.sleep(1000)
                         continue
