@@ -37,8 +37,8 @@ fun main() {
     trayIcon.popupMenu = popupMenu
     SystemTray.getSystemTray().add(trayIcon)
 
-    val serverAddressPattern = Pattern.compile("(([a-zA-Z0-9가-힣-]+\\.)+[a-zA-Z가-힣]{2,}|\\d{1,3}(\\.\\d{1,3}){3})(:\\d{1,5})?")
-    val urlPattern = Pattern.compile("https?://(([a-zA-Z0-9가-힣-]+\\.)+[a-zA-Z가-힣]{2,}|\\d{1,3}(\\.\\d{1,3}){3})(:\\d{1,5})?(/\\S+)?")
+    val serverAddressPattern = Pattern.compile("(([a-zA-Z0-9가-힣-]+\\.)+([a-zA-Z]{2,}|한국)|\\d{1,3}(\\.\\d{1,3}){3})(:\\d{1,5})?")
+    val urlPattern = Pattern.compile("https?://(([a-zA-Z0-9가-힣-]+\\.)+([a-zA-Z]{2,}|한국)|\\d{1,3}(\\.\\d{1,3}){3})(:\\d{1,5})?(/\\S+)?")
     var lastCheckedId = ArticleList(GALL_ID).apply { request() }.getGallList().first().identifier
 
     logger.info("시작됨")
@@ -76,9 +76,9 @@ fun main() {
             }
             val parsed = Jsoup.parse(Jsoup.parse(article.getViewMain().content).text()).body()
             var content = parsed.text()
-            getAddress@for (e in parsed.children()) {
+            getAddress@for (e in parsed.allElements.select("*:not([class]):not(a[href])").reversed()) {
                 if (e.className().isNotEmpty()) continue
-                val text = e.text()
+                val text = e.ownText()
                 val serverAddress = serverAddressPattern.matcher(text)
                 val urlRanges by lazy {
                     urlPattern.matcher(text).results()
