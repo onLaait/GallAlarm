@@ -5,5 +5,5 @@ import org.slf4j.LoggerFactory
 
 object Log {
 
-    val logger: Logger = LoggerFactory.getLogger("DefaultLogger")
+    val logger: Logger = LoggerFactory.getLogger("mcserverpinger")
 }

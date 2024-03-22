@@ -8,10 +8,13 @@ repositories {
 }
 
 dependencies {
-    implementation("org.apache.logging.log4j:log4j-slf4j2-impl:2.22.1")
-    implementation("be.zvz:KotlinInside:1.16.1")
+    implementation("org.apache.logging.log4j:log4j-slf4j2-impl:2.23.0")
+
+    implementation("be.zvz:KotlinInside:1.16.2")
     implementation("com.squareup.okhttp3:okhttp:5.0.0-alpha.11")
+
     implementation("org.jsoup:jsoup:1.17.2")
+    implementation("org.apache.commons:commons-text:1.11.0")
 }
 
 tasks {
