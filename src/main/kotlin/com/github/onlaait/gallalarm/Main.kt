@@ -6,6 +6,7 @@ import be.zvz.kotlininside.api.article.ArticleRead
 import be.zvz.kotlininside.http.DefaultHttpClient
 import be.zvz.kotlininside.session.user.Anonymous
 import com.github.onlaait.gallalarm.Log.logger
+import org.apache.commons.text.StringEscapeUtils
 import org.jsoup.Jsoup
 import org.jsoup.nodes.Entities
 import kotlin.system.exitProcess
@@ -13,13 +14,11 @@ import kotlin.system.exitProcess
 const val GALL_ID = "steve"
 
 fun main() {
+    logger.info("시작 중")
+
     Thread.setDefaultUncaughtExceptionHandler(DefaultExceptionHandler)
 
-    logger.info("인스턴스 생성 중")
-
     KotlinInside.createInstance(Anonymous("ㅇㅇ", "1234"), DefaultHttpClient(), true)
-
-    logger.info("시작 중")
 
     Notification
     val rgxDomain = Regex("(([a-zA-Z0-9가-힣-]+\\.)+([a-zA-Z]{2,}|한국)|\\d{1,3}(\\.\\d{1,3}){3})(:\\d{1,5})?")
@@ -35,7 +34,7 @@ fun main() {
 
         if (list.isEmpty()) {
             logger.error("글 목록이 비어있음 (세션 만료됨)")
-            exitProcess(-1)
+            exitProcess(2)
         }
 
         val newArticles = list.filter { it.identifier > lastCheckedId }.sortedBy { it.identifier }
@@ -71,7 +70,7 @@ fun main() {
             }
 
             Notification.display(
-                Entities.unescape(article.getViewInfo().subject),
+                StringEscapeUtils.unescapeHtml4(article.getViewInfo().subject),
                 notifContent,
                 "https://gall.dcinside.com/$GALL_ID/$id"
             )
@@ -82,8 +81,7 @@ fun main() {
 fun ArticleList.requestUntilNoException() {
     while (true) {
         try {
-            request()
-            return
+            return request()
         } catch (e: Exception) {
             logger.error("글 목록 읽기 중 오류: $e")
         }

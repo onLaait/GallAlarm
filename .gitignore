@@ -1,5 +1,5 @@
-/.gradle/
-/.idea/
-/build/
-/src/test/
-/log.log
+.gradle/
+.idea/
+build/
+src/test/
+log.log

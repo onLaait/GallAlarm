@@ -1,5 +1,5 @@
 plugins {
-    kotlin("jvm") version "1.9.22"
+    kotlin("jvm") version "1.9.23"
     id("com.github.johnrengelman.shadow") version "8.1.1"
 }
 
@@ -8,7 +8,7 @@ repositories {
 }
 
 dependencies {
-    implementation("org.apache.logging.log4j:log4j-slf4j2-impl:2.23.0")
+    implementation("org.apache.logging.log4j:log4j-slf4j2-impl:2.23.1")
 
     implementation("be.zvz:KotlinInside:1.16.2")
     implementation("com.squareup.okhttp3:okhttp:5.0.0-alpha.11")
@@ -27,9 +27,6 @@ tasks {
                 "Multi-Release" to true
             )
         }
-        minimize {
-            exclude(dependency("org.apache.logging.log4j:.*:.*"))
-        }
     }
 
     build {
@@ -38,5 +35,5 @@ tasks {
 }
 
 kotlin {
-    jvmToolchain(17)
+    jvmToolchain(21)
 }
