@@ -16,6 +16,8 @@ import java.awt.TrayIcon
 import javax.imageio.ImageIO
 import kotlin.system.exitProcess
 
+const val GALL_ID = "steve"
+const val HEAD_ID = 40
 
 fun main() {
     logger.info("시작 중")
@@ -23,9 +25,7 @@ fun main() {
     Thread.setDefaultUncaughtExceptionHandler(DefaultExceptionHandler)
 
     val img = ImageIO.read(Thread.currentThread().contextClassLoader.getResourceAsStream("icon.png"))
-    val trayIcon = TrayIcon(img, "GallAlarm").apply {
-        isImageAutoSize = true
-    }
+    val trayIcon = TrayIcon(img, "GallAlarm").apply { isImageAutoSize = true }
     val menuItem = MenuItem("Exit")
     menuItem.addActionListener { exitProcess(0) }
     val popupMenu = PopupMenu()
@@ -37,39 +37,28 @@ fun main() {
 
     KotlinInside.createInstance(Anonymous("ㅇㅇ", "1234"), DefaultHttpClient(), true)
 
-    val gallId = "steve"
-    val headId = 40
-
     val rgxDomain = Regex("(([a-zA-Z0-9가-힣-]+\\.)+([a-zA-Z]{2,}|한국)|\\d{1,3}(\\.\\d{1,3}){3})(:\\d{1,5})?")
     val rgxUrl = Regex("https?://${rgxDomain.pattern}(/\\S+)?")
 
     val checked = mutableListOf<Int>()
-    var lastArticle = 0
-
-    var first = true
+    val minArticle = getArticles().last()
 
     logger.info("시작됨")
 
     while (true) {
-        val list = ArticleList(gallId, headId = headId).apply { requestUntilNoException() }.getGallList()
-            .map { it.identifier }
-            .distinct()
+        Thread.sleep(5000)
+
+        val list = getArticles()
 
         if (list.isEmpty()) {
             logger.error("글 목록이 비어있음 (세션 만료됨)")
-            exitProcess(2)
+            exitProcess(1)
         }
 
-        if (first) {
-            checked += list
-            lastArticle = list.max()
-            first = false
-        }
-
-        val min = lastArticle - 5
-        val newArticles = list.filter { !checked.contains(it) && it > min }.sorted()
-        newArticles.forEach { id ->
-            val articleRead = ArticleRead(gallId, id).apply {
+        val newArticles = list.filter { it > minArticle && !checked.contains(it) }
+        if (newArticles.isEmpty()) continue
+        newArticles.forEach { articleId ->
+            val articleRead = ArticleRead(GALL_ID, articleId).apply {
                 while (true) {
                     try {
                         request()
@@ -86,7 +75,7 @@ fun main() {
             val text = html.text()
             var notifContent = text
 
-            val domainMats = rgxDomain.findAll(text).toMutableList()
+            val domainMats = rgxDomain.findAll(text).toList()
             if (domainMats.isNotEmpty()) {
                 val urlRanges = rgxUrl.findAll(text).map { it.range }
                 val domains =
@@ -99,16 +88,21 @@ fun main() {
             Notification.display(
                 StringEscapeUtils.unescapeHtml4(articleRead.getViewInfo().subject),
                 notifContent,
-                "https://gall.dcinside.com/$gallId/$id"
+                "https://gall.dcinside.com/$GALL_ID/$articleId"
             )
 
-            checked += id
-            lastArticle = id
+            checked += articleId
         }
-
-        Thread.sleep(5000)
     }
 }
+
+fun getArticles(): List<Int> =
+    ArticleList(GALL_ID, headId = HEAD_ID).apply { requestUntilNoException() }.getGallList()
+        .stream()
+        .map { it.identifier }
+        .distinct()
+        .sorted()
+        .toList()
 
 fun ArticleList.requestUntilNoException() {
     while (true) {
