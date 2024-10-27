@@ -2,7 +2,7 @@
 <Configuration status="INFO">
     <Appenders>
         <Console name="Console">
-            <PatternLayout pattern="[%d{HH:mm:ss} %level]: %msg%n" />
+            <PatternLayout pattern="[%d{HH:mm:ss} %level]: %msg%n"/>
         </Console>
         <File name="File" fileName="log.log">
             <PatternLayout pattern="[%d{yy-MM-dd HH:mm:ss}] [%t/%level]: %msg%n"/>

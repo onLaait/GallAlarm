@@ -1,6 +1,6 @@
 plugins {
-    kotlin("jvm") version "1.9.23"
-    id("com.github.johnrengelman.shadow") version "8.1.1"
+    kotlin("jvm") version "1.9.25"
+    id("com.gradleup.shadow") version "8.3.3"
 }
 
 repositories {
@@ -13,11 +13,15 @@ dependencies {
     implementation("be.zvz:KotlinInside:1.16.2")
     implementation("com.squareup.okhttp3:okhttp:5.0.0-alpha.11")
 
-    implementation("org.jsoup:jsoup:1.17.2")
-    implementation("org.apache.commons:commons-text:1.11.0")
+    implementation("org.jsoup:jsoup:1.18.1")
+    implementation("org.apache.commons:commons-text:1.12.0")
 }
 
 tasks {
+    build {
+        dependsOn(shadowJar)
+    }
+
     shadowJar {
         archiveClassifier.set("")
         mergeServiceFiles()
@@ -27,10 +31,6 @@ tasks {
                 "Multi-Release" to true
             )
         }
-    }
-
-    build {
-        dependsOn(shadowJar)
     }
 }
 
